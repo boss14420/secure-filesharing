@@ -20,6 +20,7 @@
 #define __INTEGER_HH__
 
 #include <type_traits>
+#include <cstdint>
 namespace integer {
 #if 0
 #include "endian.hh"
