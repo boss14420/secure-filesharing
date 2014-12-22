@@ -18,13 +18,12 @@ ADD_CUSTOM_TARGET(release
 set(GMP_LIBRARIES gmp gmpxx)
 if (MSVC)
 	set(GMP_INCLUDE_DIR "${CMAKE_BINARY_DIR}/packages/libgmp_vc120.5.1.3.2/build/native/include")
-	include_directories(${GMP_INCLUDE_DIR})
-	set(GMP_LIBRARIES mpir mpirxx)
-else ()
-	#set(GMP_LIBRARIES gmp gmpxx)
 	SET(MPIR_LIB "${CMAKE_BINARY_DIR}/packages/libgmp_vc120.5.1.3.2/build/native/bin/mpir-x86-v120-mt-s-5_1_3_2.lib")
 	SET(MPIRXX_LIB "${CMAKE_BINARY_DIR}/packages/libgmp_vc120.5.1.3.2/build/native/bin/mpirxx-x86-v120-mt-s-5_1_3_2.lib")
 	set(GMP_LIBRARIES "${MPIR_LIB}" "${MPIRXX_LIB}")
+	include_directories(${GMP_INCLUDE_DIR})
+else ()
+	set(GMP_LIBRARIES gmp gmpxx)
 endif ()
 
 ###############################
