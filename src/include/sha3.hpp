@@ -21,7 +21,7 @@ public:
 
     static const int b = 1600;
     static const int w = b / 25;
-    static const Lane mask = std::numeric_limits<Lane>::max();
+	static const Lane mask = static_cast<Lane>(-1);
 
     static const int d = HashSize, dd = d / 8;
     static const int c = HashSize * 2, cc = c / 8;

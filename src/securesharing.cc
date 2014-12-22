@@ -18,7 +18,7 @@
 
 #include "securesharing.hh"
 
-constexpr char SecureSharing::magic_number[];
+const char SecureSharing::magic_number[4] = { 'S', 'C', 'S', 'R' };
 
 SecureSharing::SecureSharing(std::size_t RSA_Keysize, AESKey const& aeskey,
                             std::uint64_t nonce)

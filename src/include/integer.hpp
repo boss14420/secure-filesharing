@@ -114,8 +114,8 @@ struct _big_endian_helper<0, T> {
     #define USE_XCHG(T)  (sizeof(T) == 2)
     #define USE_SHIFT(T)  (sizeof(T) != 2 && sizeof(T) != 4)
 #else
-    #define USE_BSWAP(T) (1 > 2)
-    #define USE_XCHG(T) (2 > 3)
+    #define USE_BSWAP(T) (sizeof(T) == 3)
+    #define USE_XCHG(T) (sizeof(T) == 5)
     #define USE_SHIFT(T) (true)
 #endif
 

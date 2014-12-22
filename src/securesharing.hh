@@ -38,7 +38,7 @@ public:
 
 //protected:
     typedef std::vector<std::uint8_t> bytearray;
-    static constexpr char magic_number[] = {'S', 'C', 'S', 'R'};
+    static const char magic_number[4];
 
     std::uint32_t RSA_Keysize;
     AESKey aeskey;

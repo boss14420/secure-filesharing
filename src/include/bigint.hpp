@@ -23,13 +23,14 @@
 #include <cstdint>
 #include <algorithm>
 
+#include "config.hh"
+
 #ifdef USE_BOOST_MP
     #include <boost/multiprecision/integer.hpp>
 #endif
 
 #ifdef USE_GMP
     #include <gmp.h>
-    #include <gmpxx.h>
 #endif
 
 namespace bigint {
