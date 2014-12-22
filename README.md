@@ -10,17 +10,17 @@ Mỗi khi server (A) cần chia sẽ một file f cho B, C. A sẽ làm như sau
 
 1. Mã hóa file f bằng AES với một khóa k sinh ngẫu nhiên:
 
-    x = AES(k, f)
+        x = AES(k, f)
 
 2. Sử dụng khóa công khai của B, C và của chính mình để mã hóa k:
 
-    kA = RSAOAEP(A, k)
-    kB = RSAOAEP(B, k)
-    kC = RSAOAEP(C, k)
+        kA = RSAOAEP(A, k)
+        kB = RSAOAEP(B, k)
+        kC = RSAOAEP(C, k)
 
 3. Nối phần đã mã hóa bằng RSA với phần mã hóa bằng AES:
 
-    y = kA || kB || kC || x
+        y = kA || kB || kC || x
 
 file y sẽ được chia sẻ cho B và C. B và C sẽ giải mã phần tương ứng với khóa của mình để lấy được k (sử dụng khóa bí mật):
 
@@ -66,6 +66,7 @@ Vì để ngưòi dùng có thể `nhảy` để các vị trí trong file để
 Để khắc phục điều này, ta chèn vào các thông tin giả như sau: chèn một chuỗi byte ngẫu nhiên kích thước bằng một bản mã RSA-OAEP thông thường vào tất cả các bucket trống (luôn tồn tại các bucket trống vì số bucket lớn hơn số người được chia sẻ). Việc này có các ưu điểm:
 
 1. Giấu đi thông tin chính xác về số người được chia sẻ, vì người ngoài không có cách nào để biết bản mã giả ta chèn vào có hợp lệ hay không. Tuy nhiên vẫn có thể ước lượng được khoảng giá trị vì công thức tính số bucket là công khai. 
+
 Có một cách giải quyết triệt để là chọn số bucket bằng tổng số người dùng trong hệ thống, nhưng như vậy thì kích thước file mã hóa sẽ trở nên quá lớn.
 
 2. Một người dùng (ví dụ D) không thể nào biết được một người khác mình (ví dụ C) có được chia sẻ hay không. Trước đây khi chưa chèn vào bucket trống, D có thể thử tính bucket tương ứng với C, nếu như rơi vào một bucket trống thì D có thể chắc chắn C không được chia sẻ. Bây giờ thì luôn trả về một bucket có ít nhất một bản mã (có thể giả), tuy nhiên D không thể biết được bản mã đó có phải là của C hay không.
@@ -74,7 +75,9 @@ Có một cách giải quyết triệt để là chọn số bucket bằng tổn
 
 Chú ý:
 1. bản mã giả được chọn cần phải có giá trị nhỏ hơn modulo trong khóa công khai của tất cả người dùng, nếu không thì D có thể chắc chắn đó không phải là do khóa của C mã hóa thành,
+
 2. Với những bucket có hơn 1 bản mã, D có thể chắc chắn rằng các bản mã này là hợp lệ (do đặc điểm của thuật toán nói trên) mặc dù không biết nó là của C hay không. Có thể chèn bản mã giả để cho tất cả bucket có kích thước bằng nhau, tuy nhiên như vậy sẽ làm kích thước file tăng lên. 
+
 Vì vậy cho nến chọn số bucket và hàm băm thích hợp để giảm thiểu xung đột là rất quan trọng.
 
 ## Biên dịch và chạy chương trình
@@ -117,7 +120,9 @@ Trong đó:
 - `infile` là đưòng dẫn file đầu vào (chứa nội dung cần chia sẻ). Nếu bằng `-` thì đầu vào là `stdin`, có thể dùng để nhận dữ liệu từ đầu ra của chương trình khác qua đường ông lệnh (pipe),
 - `outfile` là đường dẫn file đầu ra (đã mã hóa). Nếu bằng `-` thì đầu ra là `stdout`, có thể dùng để chuyển thành đầu vào cho chương trình khác qua pipe,
 - `keydir` là thư mục chứa các file khóa công khai. Nếu không có tùy chọn này thì mặc định là thư mục `./keys/`
+
 **CHÚ Ý**: trong thư mục `keydir` cần có chứa file `admin.publickey`, là khóa của người mã hóa (cần để giải mã sau này),
+
 - NAMES là danh sách các tên ngưòi dùng (cũng là phần đầu của tên file khóa) đưọc chia sẻ.
 
 Ví dụ:
