@@ -65,18 +65,19 @@ Vì để ngưòi dùng có thể `nhảy` để các vị trí trong file để
 
 Để khắc phục điều này, ta chèn vào các thông tin giả như sau: chèn một chuỗi byte ngẫu nhiên kích thước bằng một bản mã RSA-OAEP thông thường vào tất cả các bucket trống (luôn tồn tại các bucket trống vì số bucket lớn hơn số người được chia sẻ). Việc này có các ưu điểm:
 
-1. Giấu đi thông tin chính xác về số người được chia sẻ, vì người ngoài không có cách nào để biết bản mã giả ta chèn vào có hợp lệ hay không. Tuy nhiên vẫn có thể ước lượng được khoảng giá trị vì công thức tính số bucket là công khai. 
+- Giấu đi thông tin chính xác về số người được chia sẻ, vì người ngoài không có cách nào để biết bản mã giả ta chèn vào có hợp lệ hay không. Tuy nhiên vẫn có thể ước lượng được khoảng giá trị vì công thức tính số bucket là công khai. 
 
 Có một cách giải quyết triệt để là chọn số bucket bằng tổng số người dùng trong hệ thống, nhưng như vậy thì kích thước file mã hóa sẽ trở nên quá lớn.
 
-2. Một người dùng (ví dụ D) không thể nào biết được một người khác mình (ví dụ C) có được chia sẻ hay không. Trước đây khi chưa chèn vào bucket trống, D có thể thử tính bucket tương ứng với C, nếu như rơi vào một bucket trống thì D có thể chắc chắn C không được chia sẻ. Bây giờ thì luôn trả về một bucket có ít nhất một bản mã (có thể giả), tuy nhiên D không thể biết được bản mã đó có phải là của C hay không.
+- Một người dùng (ví dụ D) không thể nào biết được một người khác mình (ví dụ C) có được chia sẻ hay không. Trước đây khi chưa chèn vào bucket trống, D có thể thử tính bucket tương ứng với C, nếu như rơi vào một bucket trống thì D có thể chắc chắn C không được chia sẻ. Bây giờ thì luôn trả về một bucket có ít nhất một bản mã (có thể giả), tuy nhiên D không thể biết được bản mã đó có phải là của C hay không.
 
-3. Không ảnh hưởng đến việc giải mã của những người được chia sẻ.
+- Không ảnh hưởng đến việc giải mã của những người được chia sẻ.
 
 Chú ý:
-1. bản mã giả được chọn cần phải có giá trị nhỏ hơn modulo trong khóa công khai của tất cả người dùng, nếu không thì D có thể chắc chắn đó không phải là do khóa của C mã hóa thành,
 
-2. Với những bucket có hơn 1 bản mã, D có thể chắc chắn rằng các bản mã này là hợp lệ (do đặc điểm của thuật toán nói trên) mặc dù không biết nó là của C hay không. Có thể chèn bản mã giả để cho tất cả bucket có kích thước bằng nhau, tuy nhiên như vậy sẽ làm kích thước file tăng lên. 
+- bản mã giả được chọn cần phải có giá trị nhỏ hơn modulo trong khóa công khai của tất cả người dùng, nếu không thì D có thể chắc chắn đó không phải là do khóa của C mã hóa thành,
+
+- Với những bucket có hơn 1 bản mã, D có thể chắc chắn rằng các bản mã này là hợp lệ (do đặc điểm của thuật toán nói trên) mặc dù không biết nó là của C hay không. Có thể chèn bản mã giả để cho tất cả bucket có kích thước bằng nhau, tuy nhiên như vậy sẽ làm kích thước file tăng lên. 
 
 Vì vậy cho nến chọn số bucket và hàm băm thích hợp để giảm thiểu xung đột là rất quan trọng.
 
@@ -98,7 +99,7 @@ Câu lệnh biên dịch như sau:
 ### Chạy chương trình
 Sau khi biên dịch ta có 3 file thực thi:
 
-1. `rsa_genkey`: sinh cặp khóa RSA
+#### `rsa_genkey`: sinh cặp khóa RSA
 Cú pháp sử dụng như sau:
 
     ./rsa_genkey keysize name
@@ -110,7 +111,7 @@ Ví dụ:
 Sẽ sinh ra hai file `admin.publickey` và `admin.secretkey`. Xem thông tin thêm về nội
 dung 2 file này tại: https://github.com/boss14420/Crypto-example/tree/master/rsaoaep
 
-2. `encrypt`: mã hóa
+#### `encrypt`: mã hóa
 Cú pháp:
 
     ./encrypt infile outfile [-d keydir] NAMES
@@ -132,7 +133,7 @@ Ví dụ:
 Sẽ mã hóa file `abc` thành file `abc.enc`, được chia sẻ cho 10 người dùng `user1`, `user2`, ..., `user10`. Trong thư mục `./keys/` cần có các file `user1.publickey`, `user2.publickey`, ...
 
 
-3. `decrypt`: giải mã
+#### `decrypt`: giải mã
 Cú pháp:
 
     ./decrypt infile outfile username [keypath]
