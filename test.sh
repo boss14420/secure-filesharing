@@ -40,6 +40,9 @@ if [ ! -f $publickey ]; then
     echo "Done"
 fi
 
+outdir=/tmp/secureshare
+mkdir -p $outdir
+
 python2 -c "print '|' + '-'*17 + '|' + '-'*12 + '|' + '-'*10 + \
                 '|' + '-'*11 + '|' + '-'*15 + '|' + '-'*10 + '|' + '-'*9 + '|'"
 printf "| %-15s | %-10s | %-8s | %-9s | %-13s | %-8s | %-6s |\n" \
@@ -50,29 +53,31 @@ python2 -c "print '|' + '-'*17 + '|' + '-'*12 + '|' + '-'*10 + \
 for file in "$@"
 do
     filename=$(basename "$file")
+    encfile="$outdir/$filename.enc"
+    decfile="$outdir/$filename.dec"
     hsz=$(/bin/ls -lh "$file" | cut -d" " -f5)iB
     printf "| %-15s | %-10s |" "$filename" $hsz
 
-    ctime=$(/usr/bin/time -f "%e" $ENCRYPT "$file" "$file".enc -d "$keydir" tmpkey 2>&1)
-    hcsz=$(/bin/ls -lh "$file".enc | cut -d" " -f5)iB
+    ctime=$(/usr/bin/time -f "%e" $ENCRYPT "$file" "$encfile" -d "$keydir" tmpkey 2>&1)
+    hcsz=$(/bin/ls -lh "$encfile" | cut -d" " -f5)iB
     sz=$(stat --printf "%s" "$file")
-    csz=$(stat --printf "%s" "$file".enc)
+    csz=$(stat --printf "%s" "$encfile")
     ratio=$(echo "$csz / $sz" | bc -l)
     ratio=$(printf "%.03f" $ratio)
     printf " %-8s | %-09s | %-13s |" $hcsz $ratio "$ctime"s
 
-    xtime=$(/usr/bin/time -f "%e" $DECRYPT "$file".enc "$file".dec tmpkey $secretkey 2>&1)
+    xtime=$(/usr/bin/time -f "%e" $DECRYPT "$encfile" "$decfile" tmpkey $secretkey 2>&1)
     printf " %-8s |" "$xtime"s
     #printf "| %-15s | %-10s | %-8s | %-09s | %-13s | %-8s |\n" \
     #    "$filename" $hsz $hcsz $ratio "$ctime"s "$xtime"s
 
     md51=$(md5sum "$file" | cut -d" " -f1)
-    md52=$(md5sum "$file".dec | cut -d" " -f1)
+    md52=$(md5sum "$decfile" | cut -d" " -f1)
     if [[ $md51 != $md52 ]]; then
         printf " %-7s |\n" "Lỗi"
     else
         printf " %-7s |\n" "OK"
-        rm "$file".enc "$file".dec
+        rm "$encfile" "$decfile"
     fi
 done
 
