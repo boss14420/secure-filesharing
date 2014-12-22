@@ -20,7 +20,11 @@
 #define __CONFIG_HH__
 
 #define USE_GMP
+#ifdef _WIN32
+#include <mpirxx.h>
+#else
 #include <gmpxx.h>
+#endif
 typedef mpz_class BigInt;
 
 #endif // __CONFIG_HH__

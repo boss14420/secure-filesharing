@@ -14,12 +14,26 @@ ADD_CUSTOM_TARGET(release
   )
 
 ###############################
+## LIBS
+set(GMP_LIBRARIES gmp gmpxx)
+if (MSVC)
+	set(GMP_INCLUDE_DIR "${CMAKE_BINARY_DIR}/packages/libgmp_vc120.5.1.3.2/build/native/include")
+	include_directories(${GMP_INCLUDE_DIR})
+	set(GMP_LIBRARIES mpir mpirxx)
+else ()
+	#set(GMP_LIBRARIES gmp gmpxx)
+	SET(MPIR_LIB "${CMAKE_BINARY_DIR}/packages/libgmp_vc120.5.1.3.2/build/native/bin/mpir-x86-v120-mt-s-5_1_3_2.lib")
+	SET(MPIRXX_LIB "${CMAKE_BINARY_DIR}/packages/libgmp_vc120.5.1.3.2/build/native/bin/mpirxx-x86-v120-mt-s-5_1_3_2.lib")
+	set(GMP_LIBRARIES "${MPIR_LIB}" "${MPIRXX_LIB}")
+endif ()
+
+###############################
 ## COMPILER FLAGS
-if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "INTEL")
+if (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "INTEL")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -Wall -std=c++11")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -O0")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -fopenmp -flto -Ofast -march=native")
-elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+elseif (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -Wall -std=c++11")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -O0")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -fopenmp -Ofast -march=native")
@@ -58,9 +72,6 @@ add_executable(decrypt src/decrypt.cc src/file_decrypt.cc src/file_decrypt.hh
     $<TARGET_OBJECTS:securesharing> $<TARGET_OBJECTS:aes>
     $<TARGET_OBJECTS:bigint>)
 
-set(GMP_LIBRARIES gmp gmpxx)
-#set(GMP_INCLUDE_DIR "/usr/include/")
-#include_directories(${GMP_INCLUDE_DIR})
 
 target_link_libraries(rsa_genkey ${GMP_LIBRARIES})
 target_link_libraries(encrypt ${GMP_LIBRARIES})
